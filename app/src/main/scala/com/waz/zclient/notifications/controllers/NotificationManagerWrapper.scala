@@ -253,6 +253,7 @@ case class NotificationProps(when:                     Option[Long] = None,
 
 trait NotificationManagerWrapper {
   def getActiveNotificationIds: Seq[Int]
+  def areNotificationsEnabled: Boolean
 }
 
 object NotificationManagerWrapper {
@@ -265,6 +266,9 @@ object NotificationManagerWrapper {
     controller.notificationsToCancel.onUi(cancel)
 
     controller.notificationToBuild.onUi { case (id, props) => build(id, props) }
+
+    override def areNotificationsEnabled: Boolean =
+      notificationManager.getCurrentInterruptionFilter == NotificationManager.INTERRUPTION_FILTER_ALL
 
     override def getActiveNotificationIds: Seq[Int] =
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
