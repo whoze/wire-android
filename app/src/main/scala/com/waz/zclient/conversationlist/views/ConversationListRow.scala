@@ -30,6 +30,7 @@ import com.waz.model.ConversationData.ConversationType
 import com.waz.model._
 import com.waz.service.ZMessaging
 import com.waz.service.call.CallInfo
+import com.waz.service.call.CallInfo.CallState.SelfCalling
 import com.waz.threading.Threading
 import com.waz.utils._
 import com.waz.utils.events.Signal
@@ -354,8 +355,8 @@ object ConversationListRow {
       ConversationBadge.OngoingCall(Some(callDuration))
     } else if (availableCalls.contains(conversationData.id) && isGroupConv) {
       availableCalls(conversationData.id).state match {
-        case Some(CallInfo.CallState.SelfCalling) => OngoingCall(None)
-        case _                                    => ConversationBadge.IncomingCall
+        case SelfCalling => OngoingCall(None)
+        case _           => ConversationBadge.IncomingCall
       }
     } else if (conversationData.convType == ConversationType.WaitForConnection || conversationData.convType == ConversationType.Incoming) {
       ConversationBadge.WaitingConnection

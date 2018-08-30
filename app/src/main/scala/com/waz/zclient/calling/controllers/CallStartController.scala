@@ -51,7 +51,7 @@ class CallStartController(implicit inj: Injector, cxt: WireContext, ec: EventCon
   for {
     Some(call) <- currentCallOpt
     autoAnswer <- prefs.flatMap(_.preference(AutoAnswerCallPrefKey).signal)
-  } if (call.state.contains(CallState.OtherCalling) && autoAnswer) startCall(call.account, call.convId)
+  } if (call.state == CallState.OtherCalling && autoAnswer) startCall(call.account, call.convId)
 
   def startCallInCurrentConv(withVideo: Boolean, forceOption: Boolean = false) = {
     (for {
@@ -91,7 +91,7 @@ class CallStartController(implicit inj: Injector, cxt: WireContext, ec: EventCon
               getString(if (isJoiningCall) R.string.calling_ongoing_call_join_message else R.string.calling_ongoing_call_start_message),
               positiveRes = if (isJoiningCall) R.string.calling_ongoing_call_join_anyway else R.string.calling_ongoing_call_start_anyway
             ).flatMap {
-              case true  => z.calling.endCall(c.convId).map(_ => (true, true))
+              case true  => z.calling.endCall(c.convId, skipTerminating = true).map(_ => (true, true))
               case false => Future.successful((false, false))
             }
           case _ => Future.successful((true, false))
