@@ -337,7 +337,8 @@ class CallController(implicit inj: Injector, cxt: WireContext, eventContext: Eve
     } yield data.getDisplayName.toUpperCase(getLocale) + " "
 
   val callBannerText = Signal(isVideoCall, callState, isGroupCall, callingUsername, conversationName).map {
-    case (_, SelfCalling, _, _, _)                 => getString(R.string.call_banner_outgoing)
+    case (_, SelfCalling, false, caller, _)        => getString(R.string.call_banner_outgoing, caller)
+    case (_, SelfCalling, true, _, convName)       => getString(R.string.call_banner_outgoing, convName)
     case (_, OtherCalling, true, caller, convName) => getString(R.string.call_banner_incoming_group, convName.toUpperCase(getLocale), caller)
     case (_, OtherCalling, false, caller, _)       => getString(R.string.call_banner_incoming, caller)
     case (_, SelfJoining, _, _, _)                 => getString(R.string.call_banner_joining)
